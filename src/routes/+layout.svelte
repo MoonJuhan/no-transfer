@@ -3,8 +3,6 @@
 </script>
 
 <div class="app">
-	Main Layout
-
 	<main>
 		<slot />
 	</main>

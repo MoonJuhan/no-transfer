@@ -1,13 +1,13 @@
 <script>
-	console.log('hello')
+	let value
+
+	async function roll() {
+		const response = await fetch('/roll')
+		value = await response.json()
+	}
 </script>
 
-<svelte:head>
-	<title>Home</title>
-	<meta name="description" content="Svelte demo app" />
-</svelte:head>
-
-<section>Main Page</section>
-
-<style>
-</style>
+<section>
+	<button on:click={roll}>Button</button>
+	<p>You rolled a {value}</p>
+</section>
