@@ -1,13 +1,19 @@
 <script>
-	let value
+	import axios from 'axios'
 
 	async function roll() {
-		const response = await fetch('/roll')
-		value = await response.json()
+		const { data } = await axios.get('/bus-stations', {
+			params: {
+				tmX: '127.0276476',
+				tmY: '37.498025',
+				radius: '500',
+			},
+		})
+
+		console.log(data)
 	}
 </script>
 
 <section>
 	<button on:click={roll}>Button</button>
-	<p>You rolled a {value}</p>
 </section>
