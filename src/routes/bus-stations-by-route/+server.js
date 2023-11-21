@@ -7,13 +7,13 @@ export async function GET({ url }) {
 	const busRouteIds = url.searchParams.get('busRouteIds')
 
 	if (!busRouteIds) {
-		// res.status(400).json({
-		// 	status: 'error',
-		// 	error: 'query is empty',
-		// })
-
-		// return Error
-		return json({})
+		return json(
+			{
+				status: 'error',
+				error: 'query is empty',
+			},
+			{ status: 400 },
+		)
 	}
 
 	const getAllBusStations = async (busRouteIds) => {
@@ -51,8 +51,6 @@ export async function GET({ url }) {
 
 		return json(response)
 	} catch (error) {
-		console.log(error)
-		// return Error
-		return json({})
+		return json(error, { status: 400 })
 	}
 }

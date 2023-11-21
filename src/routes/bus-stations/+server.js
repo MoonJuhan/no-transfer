@@ -9,13 +9,13 @@ export async function GET({ url }) {
 	const radius = url.searchParams.get('radius')
 
 	if (!tmX || !tmY) {
-		// res.status(400).json({
-		// 	status: 'error',
-		// 	error: 'query is empty',
-		// })
-
-		// return Error
-		return json({})
+		return json(
+			{
+				status: 'error',
+				error: 'query is empty',
+			},
+			{ status: 400 },
+		)
 	}
 
 	try {
@@ -33,8 +33,6 @@ export async function GET({ url }) {
 
 		return json(data.msgBody.itemList)
 	} catch (error) {
-		console.log(error)
-		// return Error
-		return json({})
+		return json(error, { status: 400 })
 	}
 }
