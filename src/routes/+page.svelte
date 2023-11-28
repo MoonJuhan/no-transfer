@@ -16,16 +16,24 @@
 		console.log(data)
 	}
 
+	let map, marker
+
+	const onClickMap = ({ lngLat }) => {
+		marker?.remove()
+		marker = new mapboxgl.Marker().setLngLat([lngLat.lng, lngLat.lat]).addTo(map)
+	}
 	onMount(() => {
 		mapboxgl.accessToken = process.env.MAPBOX_API_KEY
 
-		new mapboxgl.Map({
+		map = new mapboxgl.Map({
 			container: 'map',
 			style: 'mapbox://styles/mapbox/streets-v12',
 			center: [127.0276476, 37.498025],
 			zoom: 9,
 			language: 'ko',
 		})
+
+		map.on('click', onClickMap)
 	})
 </script>
 
