@@ -26,3 +26,13 @@ body {
     text-wrap: balance;
   }
 }
+
+@layer components {
+  .btn-primary {
+    @apply py-0.5 px-2 bg-violet-500 text-white rounded shadow-md transition-colors hover:bg-violet-600 active:bg-violet-700;
+  }
+
+  .btn-secondary {
+    @apply py-0.5 px-2 bg-gray-500 text-white rounded shadow-md transition-colors hover:bg-gray-600 active:bg-gray-700;
+  }
+}
