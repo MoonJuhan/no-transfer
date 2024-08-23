@@ -2,36 +2,58 @@
 
 import { useEffect } from 'react'
 import mapboxgl from 'mapbox-gl'
+import ControlPanel from '@/components/ControlPanel'
+import useStore from '@/stores'
 
 export default function App() {
-  let map: any = null
-  let marker: any = null
+  const { map, setMap, marker, setMarker } = useStore()
 
   const onClickMap = ({ lngLat }: mapboxgl.MapMouseEvent) => {
     if (marker !== null) marker.remove()
 
-    marker = new mapboxgl.Marker().setLngLat([lngLat.lng, lngLat.lat]).addTo(map)
+    const newMarker = new mapboxgl.Marker().setLngLat([lngLat.lng, lngLat.lat]).addTo(map)
+    setMarker(newMarker)
   }
 
   const initMap = () => {
+    if (map !== null) return
+
     mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_API_KEY as string
 
-    map = new mapboxgl.Map({
-      container: 'map',
-      style: 'mapbox://styles/mapbox/streets-v12',
-      center: [127.0276476, 37.498025],
-      zoom: 9,
-      language: 'ko',
-    })
-
-    map.on('click', onClickMap)
+    setMap(
+      new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v12',
+        center: [127.0276476, 37.498025],
+        zoom: 9,
+        language: 'ko',
+      }),
+    )
   }
 
   useEffect(() => {
-    if (map === null) {
-      initMap()
-    }
+    initMap()
   }, [])
 
-  return <main id="map" className="w-screen h-screen" />
+  const addMapClickHandler = () => {
+    if (map !== null) map.on('click', onClickMap)
+  }
+
+  const removeMapClickHandler = () => {
+    if (map !== null) map.off('click', onClickMap)
+  }
+
+  useEffect(() => {
+    addMapClickHandler()
+
+    return () => {
+      removeMapClickHandler()
+    }
+  }, [map, marker])
+
+  return (
+    <main id="map" className="w-screen h-screen">
+      <ControlPanel />
+    </main>
+  )
 }
