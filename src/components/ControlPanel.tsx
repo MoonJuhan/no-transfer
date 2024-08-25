@@ -16,8 +16,8 @@ export default function ControlPanel({ onClickGetStationsByPosition }: ControlPa
       {isCurrentMarker ? (
         <>
           <div className="flex flex-col">
-            <span>위도: {currentMarkerPosition.lat}</span>
-            <span>경도: {currentMarkerPosition.lng}</span>
+            <span className="text-base">위도: {currentMarkerPosition.lat}</span>
+            <span className="text-base">경도: {currentMarkerPosition.lng}</span>
           </div>
           <button className="btn-primary" onClick={onClickGetStationsByPosition}>
             조회하기
@@ -27,7 +27,7 @@ export default function ControlPanel({ onClickGetStationsByPosition }: ControlPa
           </button>
         </>
       ) : (
-        <span className="text-xs">지도를 클릭하여 마커를 지정하세요.</span>
+        <span className="text-base">지도를 클릭하여 마커를 지정하세요.</span>
       )}
     </div>
   )

@@ -17,6 +17,7 @@
 }
 
 body {
+  font-size: 20px;
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(to bottom, transparent, rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
 }
@@ -28,11 +29,15 @@ body {
 }
 
 @layer components {
+  .btn {
+    @apply py-0.5 px-2 text-white rounded shadow-md text-base transition-colors;
+  }
+
   .btn-primary {
-    @apply py-0.5 px-2 bg-violet-500 text-white rounded shadow-md transition-colors hover:bg-violet-600 active:bg-violet-700;
+    @apply btn bg-violet-500 hover:bg-violet-600 active:bg-violet-700;
   }
 
   .btn-secondary {
-    @apply py-0.5 px-2 bg-gray-500 text-white rounded shadow-md transition-colors hover:bg-gray-600 active:bg-gray-700;
+    @apply btn bg-gray-500 hover:bg-gray-600 active:bg-gray-700;
   }
 }
