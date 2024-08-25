@@ -51,9 +51,32 @@ export default function App() {
     }
   }, [map, marker])
 
+  const onClickGetStationsByPosition = async () => {
+    const { lng, lat } = marker?.getLngLat() || { lng: 0, lat: 0 }
+
+    if (lng === 0 || lat === 0) {
+      console.log('Error')
+      return
+    }
+
+    const params = new URLSearchParams()
+    params.append('tmX', lng.toString())
+    params.append('tmY', lat.toString())
+    params.append('radius', '500')
+
+    try {
+      const response = await fetch(`/api/bus-stations/by-position?${params.toString()}`, { method: 'GET' })
+      const json = await response.json()
+
+      console.log(json)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   return (
     <main id="map" className="w-screen h-screen">
-      <ControlPanel />
+      <ControlPanel onClickGetStationsByPosition={onClickGetStationsByPosition} />
     </main>
   )
 }

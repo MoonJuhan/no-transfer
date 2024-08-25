@@ -2,7 +2,11 @@
 
 import useStore from '@/stores'
 
-export default function ControlPanel() {
+type ControlPanelProps = {
+  onClickGetStationsByPosition: () => void
+}
+
+export default function ControlPanel({ onClickGetStationsByPosition }: ControlPanelProps) {
   const { removeMarker } = useStore()
   const isCurrentMarker = useStore(({ marker }) => marker !== null)
   const currentMarkerPosition = useStore(({ marker }) => marker?.getLngLat() || {})
@@ -15,7 +19,9 @@ export default function ControlPanel() {
             <span>위도: {currentMarkerPosition.lat}</span>
             <span>경도: {currentMarkerPosition.lng}</span>
           </div>
-          <button className="btn-primary">조회하기</button>
+          <button className="btn-primary" onClick={onClickGetStationsByPosition}>
+            조회하기
+          </button>
           <button className="btn-secondary" onClick={removeMarker}>
             초기화
           </button>
