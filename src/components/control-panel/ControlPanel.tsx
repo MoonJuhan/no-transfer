@@ -1,11 +1,13 @@
 'use client'
 
-import CenterOverview from './CenterOverview'
+import CenterOverviewCard from './CenterOverviewCard'
+import CenterStationsCard from './CenterStationsCard'
 
 export default function ControlPanel() {
   return (
-    <div className="fixed left-4 top-4 z-10 flex flex-col gap-4">
-      <CenterOverview />
+    <div className="fixed left-4 top-4 z-10 flex flex-col gap-2">
+      <CenterOverviewCard />
+      <CenterStationsCard />
     </div>
   )
 }
