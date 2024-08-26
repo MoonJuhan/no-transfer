@@ -3,11 +3,11 @@
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import mapboxgl from 'mapbox-gl'
-import useStore from '@/stores'
+import useMapStore from '@/stores/map'
 import ModalBasic from './modal/ModalBasic'
 
 export default function Map() {
-  const { map, setMap, marker, setMarker } = useStore()
+  const { map, setMap, marker, setMarker } = useMapStore()
 
   const initMap = () => {
     if (map !== null) return

@@ -11,7 +11,7 @@ type Action = {
   removeMarker: () => void
 }
 
-const useStore = create<State & Action>((set, get) => ({
+const useMapStore = create<State & Action>((set, get) => ({
   map: null,
   setMap: (map: any) => set({ map }),
   marker: null,
@@ -26,4 +26,4 @@ const useStore = create<State & Action>((set, get) => ({
   },
 }))
 
-export default useStore
+export default useMapStore
