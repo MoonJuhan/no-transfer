@@ -8,14 +8,12 @@ export default function ControlPanel() {
   const { map, removeMarker } = useMapStore()
   const { setLoading } = useAppStore()
   const isCurrentMarker = useMapStore(({ marker }) => marker !== null)
-  const currentMarkerPosition = useMapStore<mapboxgl.LngLat>(
-    ({ marker }) => marker?.getLngLat() || { lng: null, lat: null },
-  )
+  const currentMarkerPosition = useMapStore(({ marker }) => marker?.getLngLat() || { lng: null, lat: null })
 
   const onClickGetStationsByPosition = async () => {
     const { lng, lat } = currentMarkerPosition
 
-    if (lng === null || lat === null) {
+    if (lng === null || lat === null || map === null) {
       console.log('Error')
       return
     }
@@ -35,7 +33,7 @@ export default function ControlPanel() {
 
       map.addSource('center-range', {
         type: 'geojson',
-        data: { type: 'Feature', geometry: createCircleGeometry(lng, lat, 500) },
+        data: { type: 'Feature', geometry: createCircleGeometry(lng, lat, 500) } as GeoJSON.GeoJSON,
       })
 
       map.addLayer({

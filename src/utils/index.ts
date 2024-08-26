@@ -19,5 +19,5 @@ export function createCircleGeometry(longitude: number, latitude: number, radius
   return {
     type: 'Polygon',
     coordinates: [ret],
-  }
+  } as GeoJSON.Geometry
 }

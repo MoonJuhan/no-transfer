@@ -30,6 +30,10 @@ export default function Map() {
   }, [])
 
   const onClickMap = ({ lngLat }: mapboxgl.MapMouseEvent) => {
+    if (map === null) {
+      return
+    }
+
     if (marker !== null) {
       setClickedPoint(lngLat)
       setShowModal(true)
@@ -53,7 +57,7 @@ export default function Map() {
   const onClickConfirm = () => {
     setShowModal(false)
 
-    if (clickedPoint === null) return
+    if (clickedPoint === null || marker === null) return
 
     marker.remove()
 

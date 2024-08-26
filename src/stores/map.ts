@@ -1,8 +1,8 @@
 import { create } from 'zustand'
 
 type State = {
-  map: any
-  marker: any
+  map: mapboxgl.Map | null
+  marker: mapboxgl.Marker | null
 }
 
 type Action = {
