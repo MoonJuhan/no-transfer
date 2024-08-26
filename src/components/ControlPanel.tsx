@@ -34,7 +34,7 @@ export default function ControlPanel() {
   }
 
   return (
-    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-10 bg-slate-100 rounded shadow-lg text-slate-900 flex items-center gap-2 px-2 py-0.5">
+    <div className="fixed left-4 top-4 z-10 bg-slate-100 rounded shadow-lg text-slate-900 flex items-center gap-2 px-2 py-0.5">
       {isCurrentMarker ? (
         <>
           <div className="flex flex-col">
