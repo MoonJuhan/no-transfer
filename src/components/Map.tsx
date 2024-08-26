@@ -64,16 +64,20 @@ export default function Map() {
   return (
     <>
       <div id="map" className="w-screen h-screen" />
-      {createPortal(
-        <ModalBasic
-          show={showModal}
-          setShow={setShowModal}
-          title="확인하기"
-          buttons={[{ text: '확인', className: 'btn-primary', onClick: onClickConfirm }]}
-        >
-          새로운 위치를 지정하시겠습니까?
-        </ModalBasic>,
-        document.body,
+      {typeof window === 'undefined' ? (
+        <></>
+      ) : (
+        createPortal(
+          <ModalBasic
+            show={showModal}
+            setShow={setShowModal}
+            title="확인하기"
+            buttons={[{ text: '확인', className: 'btn-primary', onClick: onClickConfirm }]}
+          >
+            새로운 위치를 지정하시겠습니까?
+          </ModalBasic>,
+          document.body,
+        )
       )}
     </>
   )
