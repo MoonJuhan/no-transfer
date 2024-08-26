@@ -7,7 +7,7 @@ import useMapStore from '@/stores/map'
 import ModalBasic from './modal/ModalBasic'
 
 export default function Map() {
-  const { map, setMap, marker, setMarker } = useMapStore()
+  const { map, setMap, centerMarker, setCenterMarker } = useMapStore()
 
   const initMap = () => {
     if (map !== null) return
@@ -34,14 +34,14 @@ export default function Map() {
       return
     }
 
-    if (marker !== null) {
+    if (centerMarker !== null) {
       setClickedPoint(lngLat)
       setShowModal(true)
       return
     }
 
     const newMarker = new mapboxgl.Marker().setLngLat([lngLat.lng, lngLat.lat]).addTo(map)
-    setMarker(newMarker)
+    setCenterMarker(newMarker)
   }
 
   useEffect(() => {
@@ -50,19 +50,19 @@ export default function Map() {
     return () => {
       if (map !== null) map.off('click', onClickMap)
     }
-  }, [map, marker])
+  }, [map, centerMarker])
 
   const [clickedPoint, setClickedPoint] = useState<mapboxgl.LngLat | null>(null)
   const [showModal, setShowModal] = useState(false)
   const onClickConfirm = () => {
     setShowModal(false)
 
-    if (clickedPoint === null || marker === null) return
+    if (clickedPoint === null || centerMarker === null) return
 
-    marker.remove()
+    centerMarker.remove()
 
     const newMarker = new mapboxgl.Marker().setLngLat([clickedPoint.lng, clickedPoint.lat]).addTo(map)
-    setMarker(newMarker)
+    setCenterMarker(newMarker)
   }
 
   return (

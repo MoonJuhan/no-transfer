@@ -2,27 +2,27 @@ import { create } from 'zustand'
 
 type State = {
   map: mapboxgl.Map | null
-  marker: mapboxgl.Marker | null
+  centerMarker: mapboxgl.Marker | null
 }
 
 type Action = {
   setMap: (map: State['map']) => void
-  setMarker: (marker: State['marker']) => void
-  removeMarker: () => void
+  setCenterMarker: (centerMarker: State['centerMarker']) => void
+  removeCenterMarker: () => void
 }
 
 const useMapStore = create<State & Action>((set, get) => ({
   map: null,
   setMap: (map: any) => set({ map }),
-  marker: null,
-  setMarker: (marker: any) => set({ marker }),
-  removeMarker: () => {
-    const currentMarker = get().marker
+  centerMarker: null,
+  setCenterMarker: (centerMarker: any) => set({ centerMarker }),
+  removeCenterMarker: () => {
+    const currentMarker = get().centerMarker
     if (currentMarker === null) return
 
     currentMarker.remove()
 
-    return set({ marker: null })
+    return set({ centerMarker: null })
   },
 }))
 
