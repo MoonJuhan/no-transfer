@@ -5,7 +5,7 @@ import useMapStore from '@/stores/map'
 import { createCircleGeometry } from '@/utils'
 import { Station } from '@/types'
 
-export default function ControlPanel() {
+export default function CenterOverview() {
   const { map, removeCenterMarker, setCenterStations, clearAllObjects } = useMapStore()
   const { setLoading } = useAppStore()
   const isCurrentMarker = useMapStore(({ centerMarker }) => centerMarker !== null)
@@ -100,7 +100,7 @@ export default function ControlPanel() {
   }
 
   return (
-    <div className="fixed left-4 top-4 z-10 bg-slate-100 rounded shadow-lg text-slate-900 flex items-center gap-2 px-2 py-0.5">
+    <div className="control-panel-card items-center gap-2">
       {isCurrentMarker ? (
         <>
           <div className="flex flex-col">

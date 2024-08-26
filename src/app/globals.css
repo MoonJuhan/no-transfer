@@ -40,4 +40,8 @@ body {
   .btn-secondary {
     @apply btn bg-gray-500 hover:bg-gray-600 active:bg-gray-700;
   }
+
+  .control-panel-card {
+    @apply bg-slate-100 rounded shadow-lg text-slate-900 px-2 py-0.5 flex;
+  }
 }
