@@ -2,14 +2,36 @@
 
 import useStore from '@/stores'
 
-type ControlPanelProps = {
-  onClickGetStationsByPosition: () => void
-}
-
-export default function ControlPanel({ onClickGetStationsByPosition }: ControlPanelProps) {
-  const { removeMarker } = useStore()
+export default function ControlPanel() {
+  const { removeMarker, setLoading } = useStore()
   const isCurrentMarker = useStore(({ marker }) => marker !== null)
-  const currentMarkerPosition = useStore(({ marker }) => marker?.getLngLat() || {})
+  const currentMarkerPosition = useStore(({ marker }) => marker?.getLngLat() || { lng: null, lat: null })
+
+  const onClickGetStationsByPosition = async () => {
+    const { lng, lat } = currentMarkerPosition
+
+    if (lng === null || lat === null) {
+      console.log('Error')
+      return
+    }
+
+    const params = new URLSearchParams()
+    params.append('tmX', lng.toString())
+    params.append('tmY', lat.toString())
+    params.append('radius', '500')
+
+    try {
+      setLoading(true)
+      const response = await fetch(`/api/bus-stations/by-position?${params.toString()}`, { method: 'GET' })
+      const json = await response.json()
+
+      console.log(json)
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-10 bg-slate-100 rounded shadow-lg text-slate-900 flex items-center gap-2 px-2 py-0.5">
