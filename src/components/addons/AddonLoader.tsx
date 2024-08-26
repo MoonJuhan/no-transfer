@@ -1,8 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-
-import useStore from '@/stores'
+import useAppStore from '@/stores/app'
 
 export default function AddonLoader() {
   const [localShow, setLocalShow] = useState(false)
@@ -22,7 +21,7 @@ export default function AddonLoader() {
     }, 150)
   }
 
-  const { isLoading } = useStore()
+  const { isLoading } = useAppStore()
   useEffect(() => {
     if (isLoading) showLoader()
     else closeLoader()

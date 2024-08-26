@@ -1,10 +1,12 @@
 'use client'
 
 import useStore from '@/stores'
+import useAppStore from '@/stores/app'
 import { createCircleGeometry } from '@/utils'
 
 export default function ControlPanel() {
-  const { map, removeMarker, setLoading } = useStore()
+  const { map, removeMarker } = useStore()
+  const { setLoading } = useAppStore()
   const isCurrentMarker = useStore(({ marker }) => marker !== null)
   const currentMarkerPosition = useStore<mapboxgl.LngLat>(
     ({ marker }) => marker?.getLngLat() || { lng: null, lat: null },
