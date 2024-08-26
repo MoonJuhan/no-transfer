@@ -7,7 +7,7 @@ import useMapStore from '@/stores/map'
 import ModalBasic from './modal/ModalBasic'
 
 export default function Map() {
-  const { map, setMap, centerMarker, setCenterMarker } = useMapStore()
+  const { map, setMap, centerMarker, setCenterMarker, clearAllObjects } = useMapStore()
 
   const initMap = () => {
     if (map !== null) return
@@ -20,6 +20,7 @@ export default function Map() {
         style: 'mapbox://styles/mapbox/streets-v12',
         center: [127.0276476, 37.498025],
         zoom: 9,
+        maxZoom: 17,
         language: 'ko',
       }),
     )
@@ -60,6 +61,7 @@ export default function Map() {
     if (clickedPoint === null || centerMarker === null) return
 
     centerMarker.remove()
+    clearAllObjects()
 
     const newMarker = new mapboxgl.Marker().setLngLat([clickedPoint.lng, clickedPoint.lat]).addTo(map)
     setCenterMarker(newMarker)

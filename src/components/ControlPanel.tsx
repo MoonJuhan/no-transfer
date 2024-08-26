@@ -14,15 +14,15 @@ export default function ControlPanel() {
   const drawCenterRange = (lng: number, lat: number) => {
     if (map === null) return
 
-    map.addSource('center-range', {
+    map.addSource('center-range-source', {
       type: 'geojson',
       data: { type: 'Feature', geometry: createCircleGeometry(lng, lat, 500) } as GeoJSON.GeoJSON,
     })
 
     map.addLayer({
-      id: 'center-range-fill',
+      id: 'center-range-layer',
       type: 'fill',
-      source: 'center-range',
+      source: 'center-range-source',
       paint: {
         'fill-color': '#888888',
         'fill-opacity': 0.2,
@@ -94,6 +94,11 @@ export default function ControlPanel() {
     }
   }
 
+  const onClickClear = () => {
+    removeCenterMarker()
+    clearAllObjects()
+  }
+
   return (
     <div className="fixed left-4 top-4 z-10 bg-slate-100 rounded shadow-lg text-slate-900 flex items-center gap-2 px-2 py-0.5">
       {isCurrentMarker ? (
@@ -105,7 +110,7 @@ export default function ControlPanel() {
           <button className="btn-primary" onClick={onClickGetStationsByPosition}>
             조회하기
           </button>
-          <button className="btn-secondary" onClick={removeMarker}>
+          <button className="btn-secondary" onClick={onClickClear}>
             초기화
           </button>
         </>

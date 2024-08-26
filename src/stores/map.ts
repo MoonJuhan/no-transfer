@@ -11,6 +11,7 @@ type Action = {
   setMap: (map: State['map']) => void
   setCenterMarker: (centerMarker: State['centerMarker']) => void
   removeCenterMarker: () => void
+  clearAllObjects: () => void
   setCenterStations: (centerStations: State['centerStations']) => void
 }
 
@@ -26,6 +27,21 @@ const useMapStore = create<State & Action>((set, get) => ({
     currentMarker.remove()
 
     return set({ centerMarker: null })
+  },
+  clearAllObjects: () => {
+    const map = get().map
+
+    if (map === null) return
+
+    const layerIds = ['center-range-layer', 'center-bus-stations-layer']
+    layerIds.forEach((layerId) => {
+      if (map.getLayer(layerId)) map.removeLayer(layerId)
+    })
+
+    const sourceIds = ['center-range-source', 'center-bus-stations-source']
+    sourceIds.forEach((sourceId) => {
+      if (map.getSource(sourceId)) map.removeSource(sourceId)
+    })
   },
   centerStations: [],
   setCenterStations: (centerStations: any) => set({ centerStations }),
