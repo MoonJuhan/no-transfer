@@ -3,12 +3,64 @@
 import useAppStore from '@/stores/app'
 import useMapStore from '@/stores/map'
 import { createCircleGeometry } from '@/utils'
+import { Station } from '@/types'
 
 export default function ControlPanel() {
-  const { map, removeMarker } = useMapStore()
+  const { map, removeCenterMarker, setCenterStations, clearAllObjects } = useMapStore()
   const { setLoading } = useAppStore()
-  const isCurrentMarker = useMapStore(({ marker }) => marker !== null)
-  const currentMarkerPosition = useMapStore(({ marker }) => marker?.getLngLat() || { lng: null, lat: null })
+  const isCurrentMarker = useMapStore(({ centerMarker }) => centerMarker !== null)
+  const currentMarkerPosition = useMapStore(({ centerMarker }) => centerMarker?.getLngLat() || { lng: null, lat: null })
+
+  const drawCenterRange = (lng: number, lat: number) => {
+    if (map === null) return
+
+    map.addSource('center-range', {
+      type: 'geojson',
+      data: { type: 'Feature', geometry: createCircleGeometry(lng, lat, 500) } as GeoJSON.GeoJSON,
+    })
+
+    map.addLayer({
+      id: 'center-range-fill',
+      type: 'fill',
+      source: 'center-range',
+      paint: {
+        'fill-color': '#888888',
+        'fill-opacity': 0.2,
+      },
+    })
+  }
+
+  const drawBusStationsPoints = (busStations: Station[]) => {
+    if (map === null) return
+
+    const features: GeoJSON.Feature<GeoJSON.Point>[] = busStations.map((station) => ({
+      type: 'Feature',
+      geometry: {
+        type: 'Point',
+        coordinates: [Number(station.gpsX), Number(station.gpsY)],
+      },
+      properties: null,
+    }))
+
+    map.addSource('center-bus-stations-source', {
+      type: 'geojson',
+      data: {
+        type: 'FeatureCollection',
+        features,
+      },
+    })
+
+    map.addLayer({
+      id: 'center-bus-stations-layer',
+      type: 'circle',
+      source: 'center-bus-stations-source',
+      paint: {
+        'circle-radius': ['interpolate', ['linear'], ['zoom'], 12, 1, 15, 10],
+        'circle-color': '#8b5cf6',
+        'circle-opacity': 0.6,
+      },
+    })
+  }
 
   const onClickGetStationsByPosition = async () => {
     const { lng, lat } = currentMarkerPosition
@@ -25,28 +77,16 @@ export default function ControlPanel() {
     params.append('tmY', lat.toString())
     params.append('radius', '500')
 
+    drawCenterRange(lng, lat)
     map.flyTo({ center: [lng, lat], zoom: 15 })
 
     try {
       const response = await fetch(`/api/bus-stations/by-position?${params.toString()}`, { method: 'GET' })
       const json = await response.json()
 
-      map.addSource('center-range', {
-        type: 'geojson',
-        data: { type: 'Feature', geometry: createCircleGeometry(lng, lat, 500) } as GeoJSON.GeoJSON,
-      })
-
-      map.addLayer({
-        id: 'center-range-fill',
-        type: 'fill',
-        source: 'center-range',
-        paint: {
-          'fill-color': '#888888',
-          'fill-opacity': 0.2,
-        },
-      })
-
-      console.log(json)
+      const centerStations = json.msgBody.itemList
+      setCenterStations(centerStations)
+      drawBusStationsPoints(centerStations)
     } catch (error) {
       console.error(error)
     } finally {
