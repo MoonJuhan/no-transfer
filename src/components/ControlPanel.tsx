@@ -1,11 +1,14 @@
 'use client'
 
 import useStore from '@/stores'
+import { createCircleGeometry } from '@/utils'
 
 export default function ControlPanel() {
-  const { removeMarker, setLoading } = useStore()
+  const { map, removeMarker, setLoading } = useStore()
   const isCurrentMarker = useStore(({ marker }) => marker !== null)
-  const currentMarkerPosition = useStore(({ marker }) => marker?.getLngLat() || { lng: null, lat: null })
+  const currentMarkerPosition = useStore<mapboxgl.LngLat>(
+    ({ marker }) => marker?.getLngLat() || { lng: null, lat: null },
+  )
 
   const onClickGetStationsByPosition = async () => {
     const { lng, lat } = currentMarkerPosition
@@ -15,15 +18,33 @@ export default function ControlPanel() {
       return
     }
 
+    setLoading(true)
+
     const params = new URLSearchParams()
     params.append('tmX', lng.toString())
     params.append('tmY', lat.toString())
     params.append('radius', '500')
 
+    map.flyTo({ center: [lng, lat], zoom: 15 })
+
     try {
-      setLoading(true)
       const response = await fetch(`/api/bus-stations/by-position?${params.toString()}`, { method: 'GET' })
       const json = await response.json()
+
+      map.addSource('center-range', {
+        type: 'geojson',
+        data: { type: 'Feature', geometry: createCircleGeometry(lng, lat, 500) },
+      })
+
+      map.addLayer({
+        id: 'center-range-fill',
+        type: 'fill',
+        source: 'center-range',
+        paint: {
+          'fill-color': '#888888',
+          'fill-opacity': 0.2,
+        },
+      })
 
       console.log(json)
     } catch (error) {
