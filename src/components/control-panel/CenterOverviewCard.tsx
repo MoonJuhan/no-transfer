@@ -5,8 +5,8 @@ import useMapStore from '@/stores/map'
 import { createCircleGeometry } from '@/utils'
 import { Station } from '@/types'
 
-export default function CenterOverview() {
-  const { map, removeCenterMarker, setCenterStations, clearAllObjects } = useMapStore()
+export default function CenterOverviewCard() {
+  const { map, setCenterStations, clearAllObjects } = useMapStore()
   const { setLoading } = useAppStore()
   const isCurrentMarker = useMapStore(({ centerMarker }) => centerMarker !== null)
   const currentMarkerPosition = useMapStore(({ centerMarker }) => centerMarker?.getLngLat() || { lng: null, lat: null })
@@ -95,7 +95,6 @@ export default function CenterOverview() {
   }
 
   const onClickClear = () => {
-    removeCenterMarker()
     clearAllObjects()
   }
 

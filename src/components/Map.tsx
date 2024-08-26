@@ -60,7 +60,6 @@ export default function Map() {
 
     if (clickedPoint === null || centerMarker === null) return
 
-    centerMarker.remove()
     clearAllObjects()
 
     const newMarker = new mapboxgl.Marker().setLngLat([clickedPoint.lng, clickedPoint.lat]).addTo(map)

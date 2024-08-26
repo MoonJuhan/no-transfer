@@ -3,21 +3,28 @@ import { Station } from '@/types'
 
 type State = {
   map: mapboxgl.Map | null
+
   centerMarker: mapboxgl.Marker | null
+
   centerStations: Station[]
 }
 
 type Action = {
   setMap: (map: State['map']) => void
+
   setCenterMarker: (centerMarker: State['centerMarker']) => void
   removeCenterMarker: () => void
-  clearAllObjects: () => void
+
   setCenterStations: (centerStations: State['centerStations']) => void
+  removeCenterStations: () => void
+
+  clearAllObjects: () => void
 }
 
 const useMapStore = create<State & Action>((set, get) => ({
   map: null,
   setMap: (map: any) => set({ map }),
+
   centerMarker: null,
   setCenterMarker: (centerMarker: any) => set({ centerMarker }),
   removeCenterMarker: () => {
@@ -28,7 +35,15 @@ const useMapStore = create<State & Action>((set, get) => ({
 
     return set({ centerMarker: null })
   },
+
+  centerStations: [],
+  setCenterStations: (centerStations: any) => set({ centerStations }),
+  removeCenterStations: () => set({ centerStations: [] }),
+
   clearAllObjects: () => {
+    get().removeCenterMarker()
+    get().removeCenterStations()
+
     const map = get().map
 
     if (map === null) return
@@ -43,8 +58,6 @@ const useMapStore = create<State & Action>((set, get) => ({
       if (map.getSource(sourceId)) map.removeSource(sourceId)
     })
   },
-  centerStations: [],
-  setCenterStations: (centerStations: any) => set({ centerStations }),
 }))
 
 export default useMapStore
