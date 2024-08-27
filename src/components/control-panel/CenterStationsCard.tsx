@@ -58,7 +58,7 @@ export default function CenterStationsCard() {
       type: 'circle',
       source: 'center-bus-stations-source',
       paint: {
-        'circle-radius': ['interpolate', ['linear'], ['zoom'], 12, 1, 15, 10],
+        'circle-radius': ['interpolate', ['linear'], ['zoom'], 12, 4, 15, 10],
         'circle-color': '#8b5cf6',
         'circle-opacity': 0.5,
       },

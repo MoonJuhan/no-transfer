@@ -21,6 +21,7 @@ type Action = {
   removeCenterStations: () => void
 
   setRoutes: (routes: State['routes']) => void
+  removeRoutes: () => void
 
   clearAllObjects: () => void
 }
@@ -46,21 +47,23 @@ const useMapStore = create<State & Action>((set, get) => ({
 
   routes: [],
   setRoutes: (routes: any) => set({ routes }),
+  removeRoutes: () => set({ routes: [] }),
 
   clearAllObjects: () => {
     get().removeCenterMarker()
     get().removeCenterStations()
+    get().removeRoutes()
 
     const map = get().map
 
     if (map === null) return
 
-    const layerIds = ['center-range-layer', 'center-bus-stations-layer']
+    const layerIds = ['center-range-layer', 'center-bus-stations-layer', 'route-bus-stations-layer']
     layerIds.forEach((layerId) => {
       if (map.getLayer(layerId)) map.removeLayer(layerId)
     })
 
-    const sourceIds = ['center-range-source', 'center-bus-stations-source']
+    const sourceIds = ['center-range-source', 'center-bus-stations-source', 'route-bus-stations-source']
     sourceIds.forEach((sourceId) => {
       if (map.getSource(sourceId)) map.removeSource(sourceId)
     })
