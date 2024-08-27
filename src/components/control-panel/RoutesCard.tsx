@@ -12,7 +12,7 @@ export default function CenterStationsCard() {
 
   return (
     isCenterStations && (
-      <div className="control-panel-card h-2/5 flex-col gap-2">
+      <div className="control-panel-card h-80 flex-col gap-2">
         <div className="flex justify-between items-centers">
           <span className="text-base">버스 경로 ({centerStations.length})</span>
           <button className="btn-primary" onClick={onClickGetRoutesByStation}>

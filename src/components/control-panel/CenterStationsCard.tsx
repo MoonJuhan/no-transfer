@@ -95,7 +95,7 @@ export default function CenterStationsCard() {
 
   return (
     isCurrentMarker && (
-      <div className="control-panel-card h-2/5 flex-col gap-2">
+      <div className="control-panel-card h-80 flex-col gap-2">
         <div className="flex justify-between items-centers">
           <span className="text-base">주변 버스 정류장 ({centerStations.length})</span>
           <button className="btn-primary" onClick={onClickGetStationsByPosition} disabled={centerStations.length > 0}>
