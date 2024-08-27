@@ -1,3 +1,5 @@
+import { ApiGetStationByPosResponse } from '@/types'
+
 export async function GET(request: Request) {
   const url = new URL(request.url)
   const searchParams = url.searchParams
@@ -15,9 +17,15 @@ export async function GET(request: Request) {
     }
 
     const json = await response.json()
-    const itemList = json.msgBody.itemList
 
-    return Response.json({ itemList })
+    const refineStation = ({ arsId, stationNm, gpsX, gpsY }: ApiGetStationByPosResponse) => ({
+      id: arsId,
+      stationName: stationNm,
+      gpsX,
+      gpsY,
+    })
+
+    return Response.json({ data: json.msgBody.itemList.map(refineStation) })
   } catch (error) {
     return error
   }

@@ -1,3 +1,5 @@
+import { ApiGetRouteByStationResponse, ApiGetStaionByRouteResponse, Route } from '@/types'
+
 export async function GET(request: Request) {
   const url = new URL(request.url)
   const arsIds = url.searchParams.get('arsIds')?.split(',') || []
