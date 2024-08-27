@@ -1,10 +1,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { createPortal } from 'react-dom'
 import mapboxgl from 'mapbox-gl'
 import useMapStore from '@/stores/map'
-import ModalBasic from './modal/ModalBasic'
+import ModalBasic from '@/components/modal/ModalBasic'
 
 export default function Map() {
   const { map, setMap, centerMarker, setCenterMarker, clearAllObjects } = useMapStore()
@@ -74,21 +73,14 @@ export default function Map() {
   return (
     <>
       <div id="map" className="w-screen h-screen" />
-      {typeof window === 'undefined' ? (
-        <></>
-      ) : (
-        createPortal(
-          <ModalBasic
-            show={showModal}
-            setShow={setShowModal}
-            title="확인하기"
-            buttons={[{ text: '확인', className: 'btn-primary', onClick: onClickConfirm }]}
-          >
-            새로운 위치를 지정하시겠습니까?
-          </ModalBasic>,
-          document.body,
-        )
-      )}
+      <ModalBasic
+        show={showModal}
+        setShow={setShowModal}
+        title="확인하기"
+        buttons={[{ text: '확인', className: 'btn-primary', onClick: onClickConfirm }]}
+      >
+        새로운 위치를 지정하시겠습니까?
+      </ModalBasic>
     </>
   )
 }

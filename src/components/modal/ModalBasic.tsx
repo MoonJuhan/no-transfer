@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { XMarkIcon } from '@heroicons/react/16/solid'
 
 type ModalBasicProps = {
@@ -41,30 +42,31 @@ export default function ModalBasic({ show, setShow, children, title, buttons }: 
     else closeModal()
   }, [show])
 
-  return (
-    <>
-      {localShow && (
-        <div className={ModalBasicClassName}>
-          <div className="flex flex-col bg-white text-black rounded w-96">
-            <div className="flex justify-between items-center px-4 py-2 border-b border-black">
-              <b>{title}</b>
-              <button onClick={closeModal}>
-                <XMarkIcon className="size-6 text-black" />
+  return typeof window !== 'undefined' && localShow ? (
+    createPortal(
+      <div className={ModalBasicClassName}>
+        <div className="flex flex-col bg-white text-black rounded w-96">
+          <div className="flex justify-between items-center px-4 py-2 border-b border-black">
+            <b>{title}</b>
+            <button onClick={closeModal}>
+              <XMarkIcon className="size-6 text-black" />
+            </button>
+          </div>
+
+          <div className="px-4 py-2">{children}</div>
+
+          <div className="flex justify-end gap-2 px-4 pb-2">
+            {buttons.map((button, index) => (
+              <button className={button.className} key={index} onClick={button.onClick}>
+                {button.text}
               </button>
-            </div>
-
-            <div className="px-4 py-2">{children}</div>
-
-            <div className="flex justify-end gap-2 px-4 pb-2">
-              {buttons.map((button, index) => (
-                <button className={button.className} key={index} onClick={button.onClick}>
-                  {button.text}
-                </button>
-              ))}
-            </div>
+            ))}
           </div>
         </div>
-      )}
-    </>
+      </div>,
+      document.body,
+    )
+  ) : (
+    <></>
   )
 }
