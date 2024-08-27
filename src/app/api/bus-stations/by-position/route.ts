@@ -1,4 +1,4 @@
-import { ApiGetStationByPosResponse } from '@/types'
+import { ApiGetStationByPosResponse, Station } from '@/types'
 
 export async function GET(request: Request) {
   const url = new URL(request.url)
@@ -25,7 +25,7 @@ export async function GET(request: Request) {
       gpsY,
     })
 
-    return Response.json({ data: json.msgBody.itemList.map(refineStation) })
+    return Response.json({ data: json.msgBody.itemList.map(refineStation).filter(({ id }: Station) => id !== '0') })
   } catch (error) {
     return error
   }
