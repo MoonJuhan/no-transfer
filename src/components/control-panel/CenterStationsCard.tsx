@@ -40,7 +40,9 @@ export default function CenterStationsCard() {
         type: 'Point',
         coordinates: [Number(station.gpsX), Number(station.gpsY)],
       },
-      properties: null,
+      properties: {
+        id: `center-bus-station-${station.stationId}`,
+      },
     }))
 
     map.addSource('center-bus-stations-source', {
@@ -58,7 +60,7 @@ export default function CenterStationsCard() {
       paint: {
         'circle-radius': ['interpolate', ['linear'], ['zoom'], 12, 1, 15, 10],
         'circle-color': '#8b5cf6',
-        'circle-opacity': 0.6,
+        'circle-opacity': 0.5,
       },
     })
   }
@@ -106,6 +108,32 @@ export default function CenterStationsCard() {
     clearAllObjects()
   }, [showModal])
 
+  const onMouseEnterStation = (station: Station) => {
+    if (map === null) return
+
+    map.addLayer({
+      id: 'center-bus-stations-highlighted-layer',
+      type: 'circle',
+      source: 'center-bus-stations-source',
+      paint: {
+        'circle-radius': ['interpolate', ['linear'], ['zoom'], 12, 1, 15, 10],
+        'circle-color': '#6d28d9',
+      },
+      filter: ['==', ['get', 'id'], `center-bus-station-${station.stationId}`],
+    })
+  }
+  const onMouseLeaveStation = () => {
+    if (map === null) return
+
+    const layerId = 'center-bus-stations-highlighted-layer'
+    if (map.getLayer(layerId)) map.removeLayer(layerId)
+  }
+
+  const onClickStation = (station: Station) => {
+    const { gpsX, gpsY } = station
+    map?.flyTo({ center: [Number(gpsX), Number(gpsY)], zoom: 17 })
+  }
+
   return (
     isCurrentMarker && (
       <>
@@ -119,7 +147,17 @@ export default function CenterStationsCard() {
 
           <div className="flex flex-col gap-2 overflow-y-auto">
             {centerStations.map((station) => (
-              <span key={station.stationId} className="text-sm">
+              <span
+                key={station.stationId}
+                className="text-sm cursor-pointer px-0.5 rounded transition-colors hover:bg-gray-200 "
+                onMouseEnter={() => {
+                  onMouseEnterStation(station)
+                }}
+                onMouseLeave={onMouseLeaveStation}
+                onClick={() => {
+                  onClickStation(station)
+                }}
+              >
                 {station.stationNm}
               </span>
             ))}
