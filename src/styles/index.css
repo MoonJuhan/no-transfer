@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+@import './button.css';
+@import './control-panel.css';
+
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
@@ -20,28 +23,4 @@ body {
   font-size: 20px;
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(to bottom, transparent, rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
-}
-
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
-}
-
-@layer components {
-  .btn {
-    @apply py-0.5 px-2 text-white rounded shadow-md text-base transition-colors;
-  }
-
-  .btn-primary {
-    @apply btn bg-violet-500 hover:bg-violet-600 active:bg-violet-700;
-  }
-
-  .btn-secondary {
-    @apply btn bg-gray-500 hover:bg-gray-600 active:bg-gray-700;
-  }
-
-  .control-panel-card {
-    @apply bg-slate-100 rounded shadow-lg text-slate-900 px-2 py-0.5 flex;
-  }
 }

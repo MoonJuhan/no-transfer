@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .control-panel-card {
+    @apply bg-slate-100 rounded shadow-lg text-slate-900 px-2 py-1 flex w-80;
+  }
+}

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-import './globals.css'
+import '@/styles/index.css'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import AddonLoader from '@/components/addons/AddonLoader'
 
