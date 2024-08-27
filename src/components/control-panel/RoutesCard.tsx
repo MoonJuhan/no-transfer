@@ -4,11 +4,30 @@ import useAppStore from '@/stores/app'
 import useMapStore from '@/stores/map'
 
 export default function CenterStationsCard() {
-  const { centerStations } = useMapStore()
+  const { map, centerStations } = useMapStore()
   const { setLoading } = useAppStore()
   const isCenterStations = useMapStore(({ centerStations }) => centerStations.length > 0)
 
-  const onClickGetRoutesByStation = async () => {}
+  const onClickGetRoutesByStation = async () => {
+    if (centerStations.length === 0 || map === null) return
+
+    setLoading(true)
+
+    const arsIds = centerStations.map((station) => station.arsId)
+
+    const params = new URLSearchParams()
+    params.append('arsIds', arsIds.join(','))
+
+    try {
+      const response = await fetch(`/api/bus-routes/by-stations?${params.toString()}`, { method: 'GET' })
+      const json = await response.json()
+      console.log(json)
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     isCenterStations && (
