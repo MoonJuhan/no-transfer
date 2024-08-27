@@ -15,8 +15,9 @@ export async function GET(request: Request) {
     }
 
     const json = await response.json()
+    const itemList = json.msgBody.itemList
 
-    return Response.json(json)
+    return Response.json({ itemList })
   } catch (error) {
     return error
   }

@@ -82,16 +82,15 @@ export default function CenterStationsCard() {
 
     try {
       const response = await fetch(`/api/bus-stations/by-position?${params.toString()}`, { method: 'GET' })
-      const json = await response.json()
+      const { itemList } = await response.json()
 
-      if (json.msgBody.itemList === null) {
+      if (itemList === null) {
         setShowModal(true)
         return
       }
 
-      const centerStations = json.msgBody.itemList as Station[]
-      setCenterStations(centerStations)
-      drawBusStationsPoints(centerStations)
+      setCenterStations(itemList)
+      drawBusStationsPoints(itemList)
     } catch (error) {
       console.error(error)
     } finally {
