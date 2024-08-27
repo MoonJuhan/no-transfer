@@ -41,7 +41,7 @@ export default function CenterStationsCard() {
         coordinates: [Number(station.gpsX), Number(station.gpsY)],
       },
       properties: {
-        id: `center-bus-station-${station.stationId}`,
+        id: `center-bus-station-${station.id}`,
       },
     }))
 
@@ -82,15 +82,15 @@ export default function CenterStationsCard() {
 
     try {
       const response = await fetch(`/api/bus-stations/by-position?${params.toString()}`, { method: 'GET' })
-      const { itemList } = await response.json()
+      const { data } = await response.json()
 
-      if (itemList === null) {
+      if (data === null) {
         setShowModal(true)
         return
       }
 
-      setCenterStations(itemList)
-      drawBusStationsPoints(itemList)
+      setCenterStations(data)
+      drawBusStationsPoints(data)
     } catch (error) {
       console.error(error)
     } finally {
@@ -118,7 +118,7 @@ export default function CenterStationsCard() {
         'circle-radius': ['interpolate', ['linear'], ['zoom'], 12, 1, 15, 10],
         'circle-color': '#6d28d9',
       },
-      filter: ['==', ['get', 'id'], `center-bus-station-${station.stationId}`],
+      filter: ['==', ['get', 'id'], `center-bus-station-${station.id}`],
     })
   }
   const onMouseLeaveStation = () => {
@@ -147,7 +147,7 @@ export default function CenterStationsCard() {
           <div className="flex flex-col gap-2 overflow-y-auto">
             {centerStations.map((station) => (
               <span
-                key={station.stationId}
+                key={station.id}
                 className="text-sm cursor-pointer px-0.5 rounded transition-colors hover:bg-gray-200 "
                 onMouseEnter={() => {
                   onMouseEnterStation(station)
@@ -157,7 +157,7 @@ export default function CenterStationsCard() {
                   onClickStation(station)
                 }}
               >
-                {station.stationNm}
+                {station.stationName}
               </span>
             ))}
           </div>

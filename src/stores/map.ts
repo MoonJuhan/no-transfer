@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { Station } from '@/types'
+import { Station, Route } from '@/types'
 
 type State = {
   map: mapboxgl.Map | null
@@ -7,6 +7,8 @@ type State = {
   centerMarker: mapboxgl.Marker | null
 
   centerStations: Station[]
+
+  routes: Route[]
 }
 
 type Action = {
@@ -17,6 +19,8 @@ type Action = {
 
   setCenterStations: (centerStations: State['centerStations']) => void
   removeCenterStations: () => void
+
+  setRoutes: (routes: State['routes']) => void
 
   clearAllObjects: () => void
 }
@@ -39,6 +43,9 @@ const useMapStore = create<State & Action>((set, get) => ({
   centerStations: [],
   setCenterStations: (centerStations: any) => set({ centerStations }),
   removeCenterStations: () => set({ centerStations: [] }),
+
+  routes: [],
+  setRoutes: (routes: any) => set({ routes }),
 
   clearAllObjects: () => {
     get().removeCenterMarker()

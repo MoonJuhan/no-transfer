@@ -20,14 +20,53 @@ export async function GET(request: Request) {
       `http://ws.bus.go.kr/api/rest/stationinfo/getRouteByStation?arsId=${arsId}&${searchParams.toString()}`,
     )
     const json = await response.json()
-    const routes = json.msgBody.itemList
-    return { arsId, routes }
+
+    const refineRoute = ({ busRouteId, busRouteNm }: ApiGetRouteByStationResponse) => ({
+      id: busRouteId,
+      busRouteName: busRouteNm,
+    })
+
+    return json.msgBody.itemList.map(refineRoute)
+  }
+
+  const fetchStationsByBusRouteId = async (busRouteId: string, searchParams: URLSearchParams) => {
+    const response = await fetch(
+      `http://ws.bus.go.kr/api/rest/busRouteInfo/getStaionByRoute?busRouteId=${busRouteId}&${searchParams.toString()}`,
+    )
+    const json = await response.json()
+
+    const refineStation = ({ arsId, stationNm, gpsX, gpsY }: ApiGetStaionByRouteResponse) => ({
+      id: arsId,
+      stationName: stationNm,
+      gpsX,
+      gpsY,
+    })
+
+    return { busRouteId, stations: json.msgBody.itemList.map(refineStation) }
   }
 
   try {
-    const responses = await Promise.all(arsIds.map((arsId) => fetchRoutesByArsId(arsId, searchParams)))
+    const routesResponse = await Promise.all(arsIds.map((arsId) => fetchRoutesByArsId(arsId, searchParams)))
 
-    return new Response(JSON.stringify(responses), { status: 200 })
+    const filteredRoutes = routesResponse
+      .flat()
+      .filter((route: Route, index: number, arr: Route[]) => arr.findIndex((r) => r.id === route.id) === index)
+
+    const busRouteIds = filteredRoutes.map((route: Route) => route.id)
+
+    const stationsResponse = await Promise.all(
+      busRouteIds.map((busRouteId) => fetchStationsByBusRouteId(busRouteId, searchParams)),
+    )
+
+    return new Response(
+      JSON.stringify({
+        data: filteredRoutes.map((route: Route) => ({
+          ...route,
+          stations: stationsResponse.find(({ busRouteId }) => busRouteId === route.id)?.stations || [],
+        })),
+      }),
+      { status: 200 },
+    )
   } catch (error) {
     return error
   }
