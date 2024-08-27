@@ -1,12 +1,14 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import useAppStore from '@/stores/app'
 import useMapStore from '@/stores/map'
 import { createCircleGeometry } from '@/utils'
 import { Station } from '@/types'
+import ModalBasic from '@/components/modal/ModalBasic'
 
 export default function CenterStationsCard() {
-  const { map, centerStations, setCenterStations, centerMarker } = useMapStore()
+  const { map, centerStations, setCenterStations, centerMarker, clearAllObjects } = useMapStore()
   const { setLoading } = useAppStore()
   const isCurrentMarker = useMapStore(({ centerMarker }) => centerMarker !== null)
 
@@ -62,10 +64,7 @@ export default function CenterStationsCard() {
   }
 
   const onClickGetStationsByPosition = async () => {
-    if (centerMarker === null || map === null) {
-      console.log('Error')
-      return
-    }
+    if (centerMarker === null || map === null) return
 
     const { lng, lat } = centerMarker.getLngLat()
 
@@ -83,7 +82,11 @@ export default function CenterStationsCard() {
       const response = await fetch(`/api/bus-stations/by-position?${params.toString()}`, { method: 'GET' })
       const json = await response.json()
 
-      const centerStations = json.msgBody.itemList
+      if (json.msgBody.itemList === null) {
+        setShowModal(true)
+        return
+      }
+
       setCenterStations(centerStations)
       drawBusStationsPoints(centerStations)
     } catch (error) {
@@ -93,24 +96,43 @@ export default function CenterStationsCard() {
     }
   }
 
+  const [showModal, setShowModal] = useState(false)
+  const onClickConfirm = () => {
+    setShowModal(false)
+  }
+  useEffect(() => {
+    if (showModal) return
+    clearAllObjects()
+  }, [showModal])
+
   return (
     isCurrentMarker && (
-      <div className="control-panel-card h-80 flex-col gap-2">
-        <div className="flex justify-between items-centers">
-          <span className="text-base">주변 버스 정류장 ({centerStations.length})</span>
-          <button className="btn-primary" onClick={onClickGetStationsByPosition} disabled={centerStations.length > 0}>
-            조회하기
-          </button>
-        </div>
+      <>
+        <div className="control-panel-card h-80 flex-col gap-2">
+          <div className="flex justify-between items-centers">
+            <span className="text-base">주변 버스 정류장 ({centerStations.length})</span>
+            <button className="btn-primary" onClick={onClickGetStationsByPosition} disabled={centerStations.length > 0}>
+              조회하기
+            </button>
+          </div>
 
-        <div className="flex flex-col gap-2 overflow-y-auto">
-          {centerStations.map((station) => (
-            <span key={station.stationId} className="text-sm">
-              {station.stationNm}
-            </span>
-          ))}
+          <div className="flex flex-col gap-2 overflow-y-auto">
+            {centerStations.map((station) => (
+              <span key={station.stationId} className="text-sm">
+                {station.stationNm}
+              </span>
+            ))}
+          </div>
         </div>
-      </div>
+        <ModalBasic
+          show={showModal}
+          setShow={setShowModal}
+          title="조회오류"
+          buttons={[{ text: '확인', className: 'btn-primary', onClick: onClickConfirm }]}
+        >
+          선택한 위치 주변에 정류장이 없습니다.
+        </ModalBasic>
+      </>
     )
   )
 }
