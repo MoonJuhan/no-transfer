@@ -19,8 +19,13 @@ export default function Map() {
         container: 'map',
         style: 'mapbox://styles/mapbox/streets-v12',
         center: [127.0276476, 37.498025],
+        maxBounds: [
+          [124.6092, 33.0041],
+          [131.8782, 38.6128],
+        ],
         zoom: 9,
         maxZoom: 17,
+        minZoom: 6,
         language: 'ko',
       }),
     )
