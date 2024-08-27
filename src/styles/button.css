@@ -4,11 +4,11 @@
 
 @layer components {
   .btn {
-    @apply py-0.5 px-2 text-white rounded shadow-md text-base transition-colors;
+    @apply py-0.5 px-2 text-white rounded shadow-md text-base transition-colors disabled:pointer-events-none;
   }
 
   .btn-primary {
-    @apply btn bg-violet-500 hover:bg-violet-600 active:bg-violet-700;
+    @apply btn bg-violet-500 hover:bg-violet-600 active:bg-violet-700 disabled:bg-violet-300 disabled:text-gray-200;
   }
 
   .btn-secondary {
