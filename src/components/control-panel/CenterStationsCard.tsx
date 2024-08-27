@@ -87,6 +87,7 @@ export default function CenterStationsCard() {
         return
       }
 
+      const centerStations = json.msgBody.itemList as Station[]
       setCenterStations(centerStations)
       drawBusStationsPoints(centerStations)
     } catch (error) {
