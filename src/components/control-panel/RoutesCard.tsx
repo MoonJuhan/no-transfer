@@ -37,8 +37,49 @@ export default function CenterStationsCard() {
       source: 'route-bus-stations-source',
       paint: {
         'circle-radius': ['interpolate', ['linear'], ['zoom'], 12, 4, 15, 10],
-        'circle-color': '#eab308',
+        'circle-color': '#f43f5e',
         'circle-opacity': 0.8,
+      },
+    })
+  }
+
+  const drawRouteLines = (routes: Route[]) => {
+    if (map === null) return
+
+    const features: GeoJSON.Feature<GeoJSON.LineString>[] = routes.map((route) => {
+      const stations = route.stations || []
+
+      return {
+        type: 'Feature',
+        geometry: {
+          type: 'LineString',
+          coordinates: stations.map((station) => [Number(station.gpsX), Number(station.gpsY)]),
+        },
+        properties: {
+          id: `route-paths-${route.id}`,
+        },
+      }
+    })
+
+    map.addSource('route-paths-source', {
+      type: 'geojson',
+      data: {
+        type: 'FeatureCollection',
+        features,
+      },
+    })
+
+    map.addLayer({
+      id: 'route-paths-layer',
+      type: 'line',
+      source: 'route-paths-source',
+      layout: {
+        'line-join': 'round',
+        'line-cap': 'round',
+      },
+      paint: {
+        'line-color': '#fb7185',
+        'line-width': 2,
       },
     })
   }
@@ -72,6 +113,7 @@ export default function CenterStationsCard() {
         })
 
       drawBusStationsPoints(routeStations)
+      drawRouteLines(data)
 
       const { lng, lat } = centerMarker.getLngLat()
       map.flyTo({ center: [lng, lat], zoom: 9 })
@@ -80,6 +122,31 @@ export default function CenterStationsCard() {
     } finally {
       setLoading(false)
     }
+  }
+
+  const onMouseEnterRoute = (route: Route) => {
+    if (map === null) return
+
+    map.addLayer({
+      id: 'route-paths-highlighted-layer',
+      type: 'line',
+      source: 'route-paths-source',
+      layout: {
+        'line-join': 'round',
+        'line-cap': 'round',
+      },
+      paint: {
+        'line-color': '#e11d48',
+        'line-width': 2,
+      },
+      filter: ['==', ['get', 'id'], `route-paths-${route.id}`],
+    })
+  }
+  const onMouseLeaveRoute = () => {
+    if (map === null) return
+
+    const layerId = 'route-paths-highlighted-layer'
+    if (map.getLayer(layerId)) map.removeLayer(layerId)
   }
 
   return (
@@ -94,7 +161,14 @@ export default function CenterStationsCard() {
 
         <div className="flex flex-col gap-2 overflow-y-auto">
           {routes.map((route) => (
-            <span key={route.id} className="text-sm cursor-pointer px-0.5 rounded transition-colors hover:bg-gray-200 ">
+            <span
+              key={route.id}
+              className="text-sm cursor-pointer px-0.5 rounded transition-colors hover:bg-gray-200"
+              onMouseEnter={() => {
+                onMouseEnterRoute(route)
+              }}
+              onMouseLeave={onMouseLeaveRoute}
+            >
               {route.busRouteName}
             </span>
           ))}

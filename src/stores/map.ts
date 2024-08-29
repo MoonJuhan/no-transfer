@@ -58,12 +58,24 @@ const useMapStore = create<State & Action>((set, get) => ({
 
     if (map === null) return
 
-    const layerIds = ['center-range-layer', 'center-bus-stations-layer', 'route-bus-stations-layer']
+    const layerIds = [
+      'center-range-layer',
+      'center-bus-stations-layer',
+      'center-bus-stations-highlighted-layer',
+      'route-bus-stations-layer',
+      'route-paths-layer',
+      'route-paths-highlighted-layer',
+    ]
     layerIds.forEach((layerId) => {
       if (map.getLayer(layerId)) map.removeLayer(layerId)
     })
 
-    const sourceIds = ['center-range-source', 'center-bus-stations-source', 'route-bus-stations-source']
+    const sourceIds = [
+      'center-range-source',
+      'center-bus-stations-source',
+      'route-bus-stations-source',
+      'route-paths-source',
+    ]
     sourceIds.forEach((sourceId) => {
       if (map.getSource(sourceId)) map.removeSource(sourceId)
     })
