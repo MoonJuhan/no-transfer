@@ -149,6 +149,16 @@ export default function CenterStationsCard() {
     if (map.getLayer(layerId)) map.removeLayer(layerId)
   }
 
+  const onClickRoute = ({ stations }: Route) => {
+    const [sumLng, sumLat] = (stations || []).reduce(
+      (acc, station) => [acc[0] + Number(station.gpsX), acc[1] + Number(station.gpsY)],
+      [0, 0],
+    )
+    const stationsLength = stations?.length || 1
+
+    map?.flyTo({ center: [sumLng / stationsLength, sumLat / stationsLength], zoom: 9 })
+  }
+
   return (
     isCenterStations && (
       <div className="control-panel-card h-80 flex-col gap-2">
@@ -168,6 +178,9 @@ export default function CenterStationsCard() {
                 onMouseEnterRoute(route)
               }}
               onMouseLeave={onMouseLeaveRoute}
+              onClick={() => {
+                onClickRoute(route)
+              }}
             >
               {route.busRouteName}
             </span>
