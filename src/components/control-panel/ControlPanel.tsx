@@ -1,7 +1,7 @@
 'use client'
 
 import CenterOverviewCard from './CenterOverviewCard'
-import CenterStationsCard from './CenterStationsCard'
+import CenterStationsCard from './center-stations/CenterStationsCard'
 import RoutesCard from './RoutesCard'
 
 export default function ControlPanel() {

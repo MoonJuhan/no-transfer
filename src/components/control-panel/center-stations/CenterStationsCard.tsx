@@ -3,9 +3,10 @@
 import { useEffect, useState } from 'react'
 import useAppStore from '@/stores/app'
 import useMapStore from '@/stores/map'
+import useCenterStations from '@/hooks/useCenterStations'
 import { createCircleGeometry } from '@/utils'
-import { Station } from '@/types'
 import ModalBasic from '@/components/modal/ModalBasic'
+import CenterStationRow from './CenterStationRow'
 
 export default function CenterStationsCard() {
   const { map, centerStations, setCenterStations, centerMarker, clearAllObjects } = useMapStore()
@@ -31,39 +32,8 @@ export default function CenterStationsCard() {
     })
   }
 
-  const drawBusStationsPoints = (busStations: Station[]) => {
-    if (map === null) return
-
-    const features: GeoJSON.Feature<GeoJSON.Point>[] = busStations.map((station) => ({
-      type: 'Feature',
-      geometry: {
-        type: 'Point',
-        coordinates: [Number(station.gpsX), Number(station.gpsY)],
-      },
-      properties: {
-        id: `center-bus-station-${station.id}`,
-      },
-    }))
-
-    map.addSource('center-bus-stations-source', {
-      type: 'geojson',
-      data: {
-        type: 'FeatureCollection',
-        features,
-      },
-    })
-
-    map.addLayer({
-      id: 'center-bus-stations-layer',
-      type: 'circle',
-      source: 'center-bus-stations-source',
-      paint: {
-        'circle-radius': ['interpolate', ['linear'], ['zoom'], 12, 4, 15, 10],
-        'circle-color': '#8b5cf6',
-        'circle-opacity': 0.5,
-      },
-    })
-  }
+  const { drawBusStationPoints, addBusStationPointsEventListeners, highlightedPointIds, updateHighlightedPoints } =
+    useCenterStations()
 
   const onClickGetStationsByPosition = async () => {
     if (centerMarker === null || map === null) return
@@ -90,13 +60,18 @@ export default function CenterStationsCard() {
       }
 
       setCenterStations(data)
-      drawBusStationsPoints(data)
+      drawBusStationPoints(data)
+      addBusStationPointsEventListeners()
     } catch (error) {
       console.error(error)
     } finally {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    updateHighlightedPoints()
+  }, [highlightedPointIds])
 
   const [showModal, setShowModal] = useState(false)
   const onClickConfirm = () => {
@@ -106,32 +81,6 @@ export default function CenterStationsCard() {
     if (showModal) return
     clearAllObjects()
   }, [showModal])
-
-  const onMouseEnterStation = (station: Station) => {
-    if (map === null) return
-
-    map.addLayer({
-      id: 'center-bus-stations-highlighted-layer',
-      type: 'circle',
-      source: 'center-bus-stations-source',
-      paint: {
-        'circle-radius': ['interpolate', ['linear'], ['zoom'], 12, 1, 15, 10],
-        'circle-color': '#6d28d9',
-      },
-      filter: ['==', ['get', 'id'], `center-bus-station-${station.id}`],
-    })
-  }
-  const onMouseLeaveStation = () => {
-    if (map === null) return
-
-    const layerId = 'center-bus-stations-highlighted-layer'
-    if (map.getLayer(layerId)) map.removeLayer(layerId)
-  }
-
-  const onClickStation = (station: Station) => {
-    const { gpsX, gpsY } = station
-    map?.flyTo({ center: [Number(gpsX), Number(gpsY)], zoom: 17 })
-  }
 
   return (
     isCurrentMarker && (
@@ -146,22 +95,11 @@ export default function CenterStationsCard() {
 
           <div className="flex flex-col gap-2 overflow-y-auto">
             {centerStations.map((station) => (
-              <span
-                key={station.id}
-                className="text-sm cursor-pointer px-0.5 rounded transition-colors hover:bg-gray-200 "
-                onMouseEnter={() => {
-                  onMouseEnterStation(station)
-                }}
-                onMouseLeave={onMouseLeaveStation}
-                onClick={() => {
-                  onClickStation(station)
-                }}
-              >
-                {station.stationName}
-              </span>
+              <CenterStationRow key={station.id} station={station} />
             ))}
           </div>
         </div>
+
         <ModalBasic
           show={showModal}
           setShow={setShowModal}
