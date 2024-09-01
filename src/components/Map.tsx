@@ -60,6 +60,8 @@ export default function Map() {
   const [clickedPoint, setClickedPoint] = useState<mapboxgl.LngLat | null>(null)
   const [showModal, setShowModal] = useState(false)
   const onClickConfirm = () => {
+    if (map === null) return
+
     setShowModal(false)
 
     if (clickedPoint === null || centerMarker === null) return
