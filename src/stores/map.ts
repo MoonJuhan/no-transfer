@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { Station, Route } from '@/types'
+import { Station, PublicTransportationRoute } from '@/types'
 
 type State = {
   map: mapboxgl.Map | null
@@ -8,7 +8,7 @@ type State = {
 
   centerStations: Station[]
 
-  routes: Route[]
+  publicTransportationRoutes: PublicTransportationRoute[]
 }
 
 type Action = {
@@ -20,8 +20,8 @@ type Action = {
   setCenterStations: (centerStations: State['centerStations']) => void
   removeCenterStations: () => void
 
-  setRoutes: (routes: State['routes']) => void
-  removeRoutes: () => void
+  setPublicTransportationRoutes: (routes: State['publicTransportationRoutes']) => void
+  removePublicTransportationRoutes: () => void
 
   clearAllObjects: () => void
 }
@@ -45,14 +45,14 @@ const useMapStore = create<State & Action>((set, get) => ({
   setCenterStations: (centerStations: any) => set({ centerStations }),
   removeCenterStations: () => set({ centerStations: [] }),
 
-  routes: [],
-  setRoutes: (routes: any) => set({ routes }),
-  removeRoutes: () => set({ routes: [] }),
+  publicTransportationRoutes: [],
+  setPublicTransportationRoutes: (publicTransportationRoutes: any) => set({ publicTransportationRoutes }),
+  removePublicTransportationRoutes: () => set({ publicTransportationRoutes: [] }),
 
   clearAllObjects: () => {
     get().removeCenterMarker()
     get().removeCenterStations()
-    get().removeRoutes()
+    get().removePublicTransportationRoutes()
 
     const map = get().map
 
@@ -62,9 +62,9 @@ const useMapStore = create<State & Action>((set, get) => ({
       'center-range-layer',
       'center-bus-stations-layer',
       'center-bus-stations-highlighted-layer',
-      'route-bus-stations-layer',
-      'route-paths-layer',
-      'route-paths-highlighted-layer',
+      'public-transportation-route-bus-stations-layer',
+      'public-transportation-route-paths-layer',
+      'public-transportation-route-paths-highlighted-layer',
     ]
     layerIds.forEach((layerId) => {
       if (map.getLayer(layerId)) map.removeLayer(layerId)
@@ -73,8 +73,8 @@ const useMapStore = create<State & Action>((set, get) => ({
     const sourceIds = [
       'center-range-source',
       'center-bus-stations-source',
-      'route-bus-stations-source',
-      'route-paths-source',
+      'public-transportation-route-bus-stations-source',
+      'public-transportation-route-paths-source',
     ]
     sourceIds.forEach((sourceId) => {
       if (map.getSource(sourceId)) map.removeSource(sourceId)

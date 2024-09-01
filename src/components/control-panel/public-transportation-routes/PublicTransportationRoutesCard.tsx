@@ -2,11 +2,11 @@
 
 import useAppStore from '@/stores/app'
 import useMapStore from '@/stores/map'
-import { Route, Station } from '@/types'
-import RouteRow from './RouteRow'
+import { PublicTransportationRoute, Station } from '@/types'
+import PublicTransportationRouteRow from './PublicTransportationRouteRow'
 
-export default function RoutesCard() {
-  const { map, centerStations, routes, setRoutes, centerMarker } = useMapStore()
+export default function PublicTransportationRoutesCard() {
+  const { map, centerStations, publicTransportationRoutes, setPublicTransportationRoutes, centerMarker } = useMapStore()
   const { setLoading } = useAppStore()
   const isCenterStations = useMapStore(({ centerStations }) => centerStations.length > 0)
 
@@ -20,11 +20,11 @@ export default function RoutesCard() {
         coordinates: [Number(station.gpsX), Number(station.gpsY)],
       },
       properties: {
-        id: `route-bus-station-${station.id}`,
+        id: `public-transportation-route-bus-station-${station.id}`,
       },
     }))
 
-    map.addSource('route-bus-stations-source', {
+    map.addSource('public-transportation-route-bus-stations-source', {
       type: 'geojson',
       data: {
         type: 'FeatureCollection',
@@ -33,9 +33,9 @@ export default function RoutesCard() {
     })
 
     map.addLayer({
-      id: 'route-bus-stations-layer',
+      id: 'public-transportation-route-bus-stations-layer',
       type: 'circle',
-      source: 'route-bus-stations-source',
+      source: 'public-transportation-route-bus-stations-source',
       paint: {
         'circle-radius': ['interpolate', ['linear'], ['zoom'], 12, 4, 15, 10],
         'circle-color': '#f43f5e',
@@ -44,7 +44,7 @@ export default function RoutesCard() {
     })
   }
 
-  const drawRouteLines = (routes: Route[]) => {
+  const drawRouteLines = (routes: PublicTransportationRoute[]) => {
     if (map === null) return
 
     const features: GeoJSON.Feature<GeoJSON.LineString>[] = routes.map((route) => {
@@ -57,12 +57,12 @@ export default function RoutesCard() {
           coordinates: stations.map((station) => [Number(station.gpsX), Number(station.gpsY)]),
         },
         properties: {
-          id: `route-paths-${route.id}`,
+          id: `public-transportation-route-paths-${route.id}`,
         },
       }
     })
 
-    map.addSource('route-paths-source', {
+    map.addSource('public-transportation-route-paths-source', {
       type: 'geojson',
       data: {
         type: 'FeatureCollection',
@@ -71,9 +71,9 @@ export default function RoutesCard() {
     })
 
     map.addLayer({
-      id: 'route-paths-layer',
+      id: 'public-transportation-route-paths-layer',
       type: 'line',
-      source: 'route-paths-source',
+      source: 'public-transportation-route-paths-source',
       layout: {
         'line-join': 'round',
         'line-cap': 'round',
@@ -100,10 +100,10 @@ export default function RoutesCard() {
       })
       const { data } = await busRoutesResponse.json()
 
-      setRoutes(data)
+      setPublicTransportationRoutes(data)
 
-      const routeStations = data
-        .map((route: Route) => route.stations)
+      const publicTransportationRouteStations = data
+        .map(({ stations }: PublicTransportationRoute) => stations)
         .flat()
         .filter((station: any, index: number, arr: any[]) => {
           const stationId = station.id
@@ -113,7 +113,7 @@ export default function RoutesCard() {
           return arr.findIndex((s) => s.id === stationId) === index
         })
 
-      drawBusStationsPoints(routeStations)
+      drawBusStationsPoints(publicTransportationRouteStations)
       drawRouteLines(data)
 
       const { lng, lat } = centerMarker.getLngLat()
@@ -129,15 +129,22 @@ export default function RoutesCard() {
     isCenterStations && (
       <div className="control-panel-card h-80 flex-col gap-2">
         <div className="flex justify-between items-centers">
-          <span className="text-base">버스 경로 ({routes.length})</span>
-          <button className="btn-primary" onClick={onClickGetRoutesByStation} disabled={routes.length > 0}>
+          <span className="text-base">버스 경로 ({publicTransportationRoutes.length})</span>
+          <button
+            className="btn-primary"
+            onClick={onClickGetRoutesByStation}
+            disabled={publicTransportationRoutes.length > 0}
+          >
             조회하기
           </button>
         </div>
 
         <div className="flex flex-col gap-2 overflow-y-auto">
-          {routes.map((route) => (
-            <RouteRow key={route.id} route={route} />
+          {publicTransportationRoutes.map((publicTransportationRoute) => (
+            <PublicTransportationRouteRow
+              key={publicTransportationRoute.id}
+              publicTransportationRoute={publicTransportationRoute}
+            />
           ))}
         </div>
       </div>

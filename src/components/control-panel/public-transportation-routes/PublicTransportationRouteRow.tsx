@@ -1,18 +1,22 @@
 'use client'
 
 import useMapStore from '@/stores/map'
-import { Route } from '@/types'
+import { PublicTransportationRoute } from '@/types'
 
-export default function RouteRow({ route }: { route: Route }) {
+type PublicTransportationRouteRowProps = {
+  publicTransportationRoute: PublicTransportationRoute
+}
+
+export default function PublicTransportationRouteRow({ publicTransportationRoute }: PublicTransportationRouteRowProps) {
   const { map } = useMapStore()
 
-  const onMouseEnterRoute = (route: Route) => {
+  const onMouseEnterRow = ({ id }: PublicTransportationRoute) => {
     if (map === null) return
 
     map.addLayer({
-      id: 'route-paths-highlighted-layer',
+      id: 'public-transportation-route-paths-highlighted-layer',
       type: 'line',
-      source: 'route-paths-source',
+      source: 'public-transportation-route-paths-source',
       layout: {
         'line-join': 'round',
         'line-cap': 'round',
@@ -21,17 +25,17 @@ export default function RouteRow({ route }: { route: Route }) {
         'line-color': '#e11d48',
         'line-width': 2,
       },
-      filter: ['==', ['get', 'id'], `route-paths-${route.id}`],
+      filter: ['==', ['get', 'id'], `public-transportation-route-paths-${id}`],
     })
   }
-  const onMouseLeaveRoute = () => {
+  const onMouseLeaveRow = () => {
     if (map === null) return
 
-    const layerId = 'route-paths-highlighted-layer'
+    const layerId = 'public-transportation-route-paths-highlighted-layer'
     if (map.getLayer(layerId)) map.removeLayer(layerId)
   }
 
-  const onClickRoute = ({ stations }: Route) => {
+  const onClickRow = ({ stations }: PublicTransportationRoute) => {
     const [sumLng, sumLat] = (stations || []).reduce(
       (acc, station) => [acc[0] + Number(station.gpsX), acc[1] + Number(station.gpsY)],
       [0, 0],
@@ -43,17 +47,17 @@ export default function RouteRow({ route }: { route: Route }) {
 
   return (
     <span
-      key={route.id}
+      key={publicTransportationRoute.id}
       className="text-sm cursor-pointer px-0.5 rounded transition-colors hover:bg-gray-200"
       onMouseEnter={() => {
-        onMouseEnterRoute(route)
+        onMouseEnterRow(publicTransportationRoute)
       }}
-      onMouseLeave={onMouseLeaveRoute}
+      onMouseLeave={onMouseLeaveRow}
       onClick={() => {
-        onClickRoute(route)
+        onClickRow(publicTransportationRoute)
       }}
     >
-      {route.busRouteName}
+      {publicTransportationRoute.name}
     </span>
   )
 }

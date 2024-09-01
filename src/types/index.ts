@@ -5,7 +5,7 @@ export interface Station {
   gpsY: string
 }
 
-export interface Route {
+export interface PublicTransportationRoute {
   id: string
   name: string
   stations?: Station[]

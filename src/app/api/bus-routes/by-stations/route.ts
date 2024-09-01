@@ -1,4 +1,4 @@
-import { ApiGetRouteByStationResponse, ApiGetStaionByRouteResponse, Route } from '@/types'
+import { ApiGetRouteByStationResponse, ApiGetStaionByRouteResponse, PublicTransportationRoute } from '@/types'
 
 export async function GET(request: Request) {
   const url = new URL(request.url)
@@ -50,9 +50,12 @@ export async function GET(request: Request) {
 
     const filteredRoutes = routesResponse
       .flat()
-      .filter((route: Route, index: number, arr: Route[]) => arr.findIndex((r) => r.id === route.id) === index)
+      .filter(
+        ({ id }: PublicTransportationRoute, index: number, arr: PublicTransportationRoute[]) =>
+          arr.findIndex((r) => r.id === id) === index,
+      )
 
-    const busRouteIds = filteredRoutes.map((route: Route) => route.id)
+    const busRouteIds = filteredRoutes.map(({ id }: PublicTransportationRoute) => id)
 
     const stationsResponse = await Promise.all(
       busRouteIds.map((busRouteId) => fetchStationsByBusRouteId(busRouteId, searchParams)),
@@ -60,7 +63,7 @@ export async function GET(request: Request) {
 
     return new Response(
       JSON.stringify({
-        data: filteredRoutes.map((route: Route) => ({
+        data: filteredRoutes.map((route: PublicTransportationRoute) => ({
           ...route,
           stations: stationsResponse.find(({ busRouteId }) => busRouteId === route.id)?.stations || [],
         })),
