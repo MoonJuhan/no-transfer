@@ -2,7 +2,7 @@
 
 import CenterOverviewCard from './CenterOverviewCard'
 import CenterStationsCard from './center-stations/CenterStationsCard'
-import RoutesCard from './RoutesCard'
+import RoutesCard from './routes/RoutesCard'
 
 export default function ControlPanel() {
   return (

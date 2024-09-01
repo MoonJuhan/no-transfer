@@ -3,8 +3,9 @@
 import useAppStore from '@/stores/app'
 import useMapStore from '@/stores/map'
 import { Route, Station } from '@/types'
+import RouteRow from './RouteRow'
 
-export default function CenterStationsCard() {
+export default function RoutesCard() {
   const { map, centerStations, routes, setRoutes, centerMarker } = useMapStore()
   const { setLoading } = useAppStore()
   const isCenterStations = useMapStore(({ centerStations }) => centerStations.length > 0)
@@ -124,41 +125,6 @@ export default function CenterStationsCard() {
     }
   }
 
-  const onMouseEnterRoute = (route: Route) => {
-    if (map === null) return
-
-    map.addLayer({
-      id: 'route-paths-highlighted-layer',
-      type: 'line',
-      source: 'route-paths-source',
-      layout: {
-        'line-join': 'round',
-        'line-cap': 'round',
-      },
-      paint: {
-        'line-color': '#e11d48',
-        'line-width': 2,
-      },
-      filter: ['==', ['get', 'id'], `route-paths-${route.id}`],
-    })
-  }
-  const onMouseLeaveRoute = () => {
-    if (map === null) return
-
-    const layerId = 'route-paths-highlighted-layer'
-    if (map.getLayer(layerId)) map.removeLayer(layerId)
-  }
-
-  const onClickRoute = ({ stations }: Route) => {
-    const [sumLng, sumLat] = (stations || []).reduce(
-      (acc, station) => [acc[0] + Number(station.gpsX), acc[1] + Number(station.gpsY)],
-      [0, 0],
-    )
-    const stationsLength = stations?.length || 1
-
-    map?.flyTo({ center: [sumLng / stationsLength, sumLat / stationsLength], zoom: 9 })
-  }
-
   return (
     isCenterStations && (
       <div className="control-panel-card h-80 flex-col gap-2">
@@ -171,19 +137,7 @@ export default function CenterStationsCard() {
 
         <div className="flex flex-col gap-2 overflow-y-auto">
           {routes.map((route) => (
-            <span
-              key={route.id}
-              className="text-sm cursor-pointer px-0.5 rounded transition-colors hover:bg-gray-200"
-              onMouseEnter={() => {
-                onMouseEnterRoute(route)
-              }}
-              onMouseLeave={onMouseLeaveRoute}
-              onClick={() => {
-                onClickRoute(route)
-              }}
-            >
-              {route.busRouteName}
-            </span>
+            <RouteRow key={route.id} route={route} />
           ))}
         </div>
       </div>
