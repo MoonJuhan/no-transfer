@@ -33,7 +33,7 @@ export default function CenterStationRow({ station }: { station: Station }) {
         onClickStation(station)
       }}
     >
-      {station.stationName}
+      {station.name}
     </span>
   )
 }
