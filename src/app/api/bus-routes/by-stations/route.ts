@@ -23,7 +23,7 @@ export async function GET(request: Request) {
 
     const refineRoute = ({ busRouteId, busRouteNm }: ApiGetRouteByStationResponse) => ({
       id: busRouteId,
-      busRouteName: busRouteNm,
+      name: busRouteNm,
     })
 
     return json.msgBody.itemList.map(refineRoute)
@@ -37,7 +37,7 @@ export async function GET(request: Request) {
 
     const refineStation = ({ arsId, stationNm, gpsX, gpsY }: ApiGetStaionByRouteResponse) => ({
       id: arsId,
-      stationName: stationNm,
+      name: stationNm,
       gpsX,
       gpsY,
     })

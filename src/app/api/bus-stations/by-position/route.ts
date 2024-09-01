@@ -20,7 +20,7 @@ export async function GET(request: Request) {
 
     const refineStation = ({ arsId, stationNm, gpsX, gpsY }: ApiGetStationByPosResponse) => ({
       id: arsId,
-      stationName: stationNm,
+      name: stationNm,
       gpsX,
       gpsY,
     })

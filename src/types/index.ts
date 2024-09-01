@@ -1,13 +1,13 @@
 export interface Station {
   id: string
-  stationName: string
+  name: string
   gpsX: string
   gpsY: string
 }
 
 export interface Route {
   id: string
-  busRouteName: string
+  name: string
   stations?: Station[]
 }
 
