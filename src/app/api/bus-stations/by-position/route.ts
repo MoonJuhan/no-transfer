@@ -1,6 +1,6 @@
 import { ApiGetStationByPosResponse, Station } from '@/types'
 
-export async function GET(request: Request) {
+export async function GET(request: Request): Promise<void | Response> {
   const url = new URL(request.url)
   const searchParams = url.searchParams
 
@@ -27,6 +27,6 @@ export async function GET(request: Request) {
 
     return Response.json({ data: json.msgBody.itemList.map(refineStation).filter(({ id }: Station) => id !== '0') })
   } catch (error) {
-    return error
+    return new Response(error as string)
   }
 }

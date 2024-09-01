@@ -1,11 +1,11 @@
 import { ApiGetRouteByStationResponse, ApiGetStaionByRouteResponse, PublicTransportationRoute } from '@/types'
 
-export async function GET(request: Request) {
+export async function GET(request: Request): Promise<void | Response> {
   const url = new URL(request.url)
   const arsIds = url.searchParams.get('arsIds')?.split(',') || []
 
   if (arsIds.length === 0) {
-    return new Error('arsIds is empty')
+    return new Response('arsIds is empty')
   }
 
   const searchParams = new URLSearchParams()
@@ -71,6 +71,6 @@ export async function GET(request: Request) {
       { status: 200 },
     )
   } catch (error) {
-    return error
+    return new Response(error as string)
   }
 }
